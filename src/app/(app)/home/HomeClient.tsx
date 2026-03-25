@@ -121,7 +121,7 @@ export default function HomeClient({ profile, recentCollection, dailyClaimed: in
                     animation: 'squishy-float 3s ease-in-out infinite',
                   }}
                 >
-                  <SquishySVG shapeIdx={shapeIdx} size={70} />
+                  <SquishySVG shapeIdx={shapeIdx} size={70} series={s.series} />
                   <span
                     className="text-xs text-center truncate w-full"
                     style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}

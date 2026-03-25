@@ -121,7 +121,7 @@ export default function CollectionClient({ collection, totalPossible }: Props) {
                 {item.is_favorite && (
                   <span className="absolute top-2 right-2.5 text-sm">❤️</span>
                 )}
-                <SquishySVG shapeIdx={shapeIdx} size={80} />
+                <SquishySVG shapeIdx={shapeIdx} size={80} series={s.series} />
                 <span
                   className="text-xs text-center leading-tight"
                   style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}

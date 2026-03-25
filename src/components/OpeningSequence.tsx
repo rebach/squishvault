@@ -122,7 +122,7 @@ export default function OpeningSequence({ bag, result, onDone }: Props) {
               animation: rarity === 'mythic' ? 'mythic-pulse 2s infinite' : rarity === 'rare' ? 'rare-shimmer 2s infinite' : 'none',
             }}
           >
-            <SquishySVG shapeIdx={shapeIdx} size={160} />
+            <SquishySVG shapeIdx={shapeIdx} size={160} series={squishy?.series} />
           </div>
 
           <div className="text-center" style={{ animation: 'slide-up 0.5s 0.3s ease both' }}>

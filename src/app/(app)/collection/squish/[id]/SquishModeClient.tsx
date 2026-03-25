@@ -165,7 +165,7 @@ export default function SquishModeClient({ item }: Props) {
             animation: !isSquishing && scaleX === 1 ? 'squishy-float 3s ease-in-out infinite' : 'none',
           }}
         >
-          <SquishySVG shapeIdx={shapeIdx} size={220} />
+          <SquishySVG shapeIdx={shapeIdx} size={220} series={squishy.series} />
         </div>
 
         <p className="mt-4 text-sm" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-body)' }}>
