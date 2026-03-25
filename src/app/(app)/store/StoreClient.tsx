@@ -6,6 +6,7 @@ import { RARITY_CONFIG } from '@/lib/constants';
 import CoinDisplay from '@/components/CoinDisplay';
 import { openBag } from '@/app/actions/open-bag';
 import OpeningSequence from '@/components/OpeningSequence';
+import { playSound } from '@/lib/sounds';
 
 interface Props {
   coins: number;
@@ -33,6 +34,7 @@ export default function StoreClient({ coins: initialCoins, bags }: Props) {
     if (coins < bag.cost_coins || isPending) return;
     setOpeningBag(bag);
 
+    playSound('coin-collect');
     startTransition(async () => {
       try {
         const result = await openBag(bag.id);

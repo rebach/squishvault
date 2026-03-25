@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import SquishySVG from '@/components/SquishySVG';
+import Onboarding from '@/components/Onboarding';
 import { RARITY_CONFIG, SQUISHY_SHAPES } from '@/lib/constants';
 import { claimDailyReward } from '@/app/actions/claim-daily';
+import { playSound } from '@/lib/sounds';
 
 interface Props {
   profile: any;
@@ -17,7 +19,20 @@ export default function HomeClient({ profile, recentCollection, dailyClaimed: in
   const [claimed, setClaimed] = useState(initialClaimed);
   const [claimResult, setClaimResult] = useState<any>(null);
   const [isPending, startTransition] = useTransition();
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Show onboarding for new users (0 bags opened, first visit)
+    if (profile?.total_bags_opened === 0 && !localStorage.getItem('sv_onboarded')) {
+      setShowOnboarding(true);
+    }
+  }, [profile]);
+
+  const handleOnboardingDone = () => {
+    setShowOnboarding(false);
+    try { localStorage.setItem('sv_onboarded', '1'); } catch {}
+  };
 
   const handleClaimDaily = () => {
     startTransition(async () => {
@@ -25,6 +40,8 @@ export default function HomeClient({ profile, recentCollection, dailyClaimed: in
         const result = await claimDailyReward();
         setClaimResult(result);
         setClaimed(true);
+        playSound('daily-reward');
+        playSound('coin-shower');
         router.refresh();
       } catch (err: any) {
         console.error(err);
@@ -41,6 +58,8 @@ export default function HomeClient({ profile, recentCollection, dailyClaimed: in
   ];
 
   return (
+    <>
+    {showOnboarding && <Onboarding onDone={handleOnboardingDone} />}
     <div className="px-5 py-5" style={{ animation: 'fade-in 0.3s ease' }}>
       {/* Daily Reward Banner */}
       {!claimed ? (
@@ -180,5 +199,6 @@ export default function HomeClient({ profile, recentCollection, dailyClaimed: in
         </div>
       </div>
     </div>
+    </>
   );
 }

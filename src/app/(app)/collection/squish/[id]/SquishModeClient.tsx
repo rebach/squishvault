@@ -7,6 +7,7 @@ import RarityBadge from '@/components/RarityBadge';
 import Confetti from '@/components/Confetti';
 import { RARITY_CONFIG } from '@/lib/constants';
 import { updateSquishCount, toggleFavorite } from '@/app/actions/squish';
+import { playSound, preloadSounds } from '@/lib/sounds';
 
 interface Props {
   item: any;
@@ -28,10 +29,15 @@ export default function SquishModeClient({ item }: Props) {
   const shapeIdx = squishy.name.length % 8;
   const rarityConfig = RARITY_CONFIG[squishy.rarity as keyof typeof RARITY_CONFIG];
 
+  useEffect(() => {
+    preloadSounds(['squish-press', 'squish-release', 'squish-combo', 'wishlist-add']);
+  }, []);
+
   const handleSquishDown = useCallback(() => {
     setIsSquishing(true);
     setScaleX(1.3);
     setScaleY(0.7);
+    playSound('squish-press', 0.15);
 
     setSquishCount((prev: number) => {
       const next = prev + 1;
@@ -47,6 +53,8 @@ export default function SquishModeClient({ item }: Props) {
       const next = prev + 1;
       if (next >= 10) {
         setShowCombo(true);
+        playSound('squish-combo');
+        playSound('celebration');
         setTimeout(() => setShowCombo(false), 1500);
         return 0;
       }
@@ -59,6 +67,7 @@ export default function SquishModeClient({ item }: Props) {
 
   const handleSquishUp = useCallback(() => {
     setIsSquishing(false);
+    playSound('squish-release', 0.1);
     setScaleX(0.9);
     setScaleY(1.15);
     setTimeout(() => {
@@ -74,6 +83,7 @@ export default function SquishModeClient({ item }: Props) {
   const handleToggleFavorite = () => {
     const next = !isFavorite;
     setIsFavorite(next);
+    if (next) playSound('wishlist-add');
     toggleFavorite(item.id, next);
   };
 

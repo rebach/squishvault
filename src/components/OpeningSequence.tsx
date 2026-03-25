@@ -5,6 +5,7 @@ import SquishySVG from './SquishySVG';
 import RarityBadge from './RarityBadge';
 import Confetti from './Confetti';
 import { RARITY_CONFIG } from '@/lib/constants';
+import { playSound, preloadSounds } from '@/lib/sounds';
 
 interface Props {
   bag: any;
@@ -25,18 +26,33 @@ export default function OpeningSequence({ bag, result, onDone }: Props) {
   const [phase, setPhase] = useState<'shake' | 'reveal' | 'show'>('shake');
 
   useEffect(() => {
+    preloadSounds(['bag-crinkle', 'bag-rip', 'reveal-common', 'reveal-uncommon', 'reveal-rare', 'reveal-mythic', 'celebration']);
+    playSound('bag-crinkle');
+  }, []);
+
+  useEffect(() => {
     if (result) {
-      const t = setTimeout(() => setPhase('reveal'), 1800);
+      const t = setTimeout(() => {
+        playSound('bag-rip');
+        setPhase('reveal');
+      }, 1800);
       return () => clearTimeout(t);
     }
   }, [result]);
 
   useEffect(() => {
     if (phase === 'reveal') {
-      const t = setTimeout(() => setPhase('show'), 800);
+      const t = setTimeout(() => {
+        const rKey = result?.squishy?.rarity || 'common';
+        playSound(`reveal-${rKey}` as any);
+        if (rKey === 'rare' || rKey === 'mythic') {
+          playSound('celebration');
+        }
+        setPhase('show');
+      }, 800);
       return () => clearTimeout(t);
     }
-  }, [phase]);
+  }, [phase, result]);
 
   const squishy = result?.squishy;
   const rarity = squishy?.rarity;
